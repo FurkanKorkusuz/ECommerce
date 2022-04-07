@@ -1,4 +1,5 @@
 ﻿using Business.Abstract;
+using Entities.Concrete;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System;
@@ -21,7 +22,10 @@ namespace Web.UI.MVC.Jquery.Controllers
 
         public IActionResult Index()
         {
-            var s = _BrandService.GetList(0, new Dictionary<string, string>());
+            Dictionary<string, string> filter = new Dictionary<string, string>();
+           
+            var data = _BrandService.GetList(0, filter, 100);
+           //var brand =_BrandService.Update(new Brand {ID=2, BrandName = " cache" });
             return View();
         }
 

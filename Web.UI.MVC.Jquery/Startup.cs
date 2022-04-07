@@ -1,3 +1,6 @@
+using Core.DependencyResolvers;
+using Core.Extensions;
+using Core.Utilities.IoC;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -24,6 +27,15 @@ namespace Web.UI.MVC.Jquery
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllersWithViews();
+
+            // Eklemem gereken servisleri bu þekilde ekleyebilirim ancak kendi servis Tool umu yazarak burayý deðiþtirmeden Core katmanýnda müdahele edebilirim. Ýleride yani proje oluþturursam servislerim core dan ekli gelir.
+            // services.AddMemoryCache();
+
+            // Yukarýdaki eklemeyi yapmak yerine Core dan eklediðim servisleri burada çalýþtýrmak için
+            services.AddDependencyResolvers(new ICoreModule[]
+            {
+                new CoreModule(),
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

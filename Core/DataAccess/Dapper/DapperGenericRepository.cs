@@ -126,6 +126,12 @@ namespace Core.DataAccess.Dapper
                             }
                         }
                         break;
+                    case "BrandName":
+                        {
+                            rtn += " and BrandName = @BrandName" ;
+                            prt.Add("@BrandName", item.Value);
+                        }
+                        break;
 
 
                 }

@@ -1,6 +1,7 @@
 ﻿using Business.Abstract;
 using Core.DataAccess.Abstract;
 using Core.Utilities.Business;
+using Core.Utilities.Results;
 using DataAccess.Abstract;
 using Entities.Concrete;
 using System;
@@ -19,6 +20,6 @@ namespace Business.Concrete
             _ProductDal = dal;
         }
 
-    
+       
     }
 }

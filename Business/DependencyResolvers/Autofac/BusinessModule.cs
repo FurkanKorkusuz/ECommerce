@@ -1,6 +1,9 @@
 ﻿using Autofac;
+using Autofac.Extras.DynamicProxy;
 using Business.Abstract;
 using Business.Concrete;
+using Castle.DynamicProxy;
+using Core.Utilities.Interceptors.Autofac;
 using DataAccess.Abstract;
 using DataAccess.Concrete.Dapper;
 using System;
@@ -21,13 +24,17 @@ namespace Business.DependencyResolvers.Autofac
             builder.RegisterType<BrandManager>().As<IBrandService>();
             builder.RegisterType<DpBrandDal>().As<IBrandDal>();
 
-            //var assembly = System.Reflection.Assembly.GetExecutingAssembly();
+            // Mevcut assembly' ye ulaş.
+            var assembly = System.Reflection.Assembly.GetExecutingAssembly();
 
-            //builder.RegisterAssemblyTypes(assembly).AsImplementedInterfaces()
-            //    .EnableInterfaceInterceptors(new ProxyGenerationOptions()
-            //    {
-            //        Selector = new AspectInterceptorSelector()
-            //    }).SingleInstance();
+            // builder.RegisterAssemblyTypes(assembly) >>>>> bu assembly deki tüm tipleri kaydet.
+            // ProxyGenerationOptions() >>> araya girme
+            // Selector >>> araya girecek olan nesne
+            builder.RegisterAssemblyTypes(assembly).AsImplementedInterfaces()
+                .EnableInterfaceInterceptors(new ProxyGenerationOptions()
+                {
+                    Selector = new AspectInterceptorSelector()
+                }).SingleInstance();
         }
     }
 }

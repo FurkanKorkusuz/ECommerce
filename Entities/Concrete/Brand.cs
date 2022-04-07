@@ -8,6 +8,9 @@ using System.Threading.Tasks;
 
 namespace Entities.Concrete
 {
+    /// <summary>
+    /// Generic Repository de tablo adı dinamik olsun diye buradaki  [Table("Brands")] Attribute ünden okuyorum.
+    /// </summary>
     [Table("Brands")]
     public  class Brand:IEntity
     {
