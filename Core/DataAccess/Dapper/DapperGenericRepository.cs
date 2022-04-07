@@ -62,7 +62,24 @@ namespace Core.DataAccess.Dapper
 
         private IEnumerable<PropertyInfo> GetProperties => typeof(T).GetProperties();
 
-
+        public List<T> GetAll()
+        {
+            List<T> list = null;
+            string sqlQuery = @"select *
+                            from " + _tableName ;
+            try
+            {
+                using (var connection = CreateConnection())
+                {
+                    list = connection.Query<T>(sqlQuery).ToList();
+                }
+            }
+            catch (Exception ex)
+            {
+                string msg = ex.Message;
+            }
+            return list;
+        }
         public virtual List<T> GetList(int rowNumber, Dictionary<string, string> flt, int rowPerPage = 30)
         {
             List<T> list = null;
@@ -273,5 +290,7 @@ namespace Core.DataAccess.Dapper
 
             return updateQuery.ToString();
         }
+
+     
     }
 }

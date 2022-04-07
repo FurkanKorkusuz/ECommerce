@@ -4,6 +4,7 @@ using Core.Aspects.Autofac.Caching;
 using Core.Aspects.Autofac.Transaction;
 using Core.Aspects.Autofac.Validation;
 using Core.CrossCuttingConcerns.Validation.FluentValidation;
+using Core.DataAccess.Dapper;
 using Core.Utilities.Business;
 using Core.Utilities.Results;
 using DataAccess.Abstract;
@@ -50,6 +51,11 @@ namespace Business.Concrete
         {
             _BrandDal.Update(brand);
             return new SuccessResult();
+        }
+
+        public List<Brand> GetList(QueryParameter parameter)
+        {
+            return _BrandDal.GetList(parameter);
         }
     }
 }

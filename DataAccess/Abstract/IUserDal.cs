@@ -1,6 +1,5 @@
 ﻿using Core.DataAccess.Abstract;
-using Core.DataAccess.Dapper;
-using Entities.Concrete;
+using Core.Entities.Concrete;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,8 +8,8 @@ using System.Threading.Tasks;
 
 namespace DataAccess.Abstract
 {
-    public interface IBrandDal :  IDapperGenericRepository<Brand>
+    public interface IUserDal :IDapperGenericRepository<User>
     {
-        public List<Brand> GetList(QueryParameter parameter);
+        List<OperationClaim> GetOperationClaims(int userid);
     }
 }

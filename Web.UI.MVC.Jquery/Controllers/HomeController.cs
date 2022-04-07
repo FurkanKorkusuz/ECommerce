@@ -1,4 +1,5 @@
 ﻿using Business.Abstract;
+using Core.DataAccess.Dapper;
 using Entities.Concrete;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -8,6 +9,8 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using Web.UI.MVC.Jquery.Models;
+using static Core.DataAccess.Dapper.QueryFilter;
+using static Core.DataAccess.Dapper.WhereCondinition;
 
 namespace Web.UI.MVC.Jquery.Controllers
 {
@@ -23,8 +26,14 @@ namespace Web.UI.MVC.Jquery.Controllers
         public IActionResult Index()
         {
             Dictionary<string, string> filter = new Dictionary<string, string>();
-           
-            var data = _BrandService.GetList(0, filter, 100);
+            QueryParameter parameter2 = new QueryParameter();
+            QueryFilter filter1 = new QueryFilter();
+            filter1.FilterKey = "ID";
+            filter1.FilterValue = 1;
+            parameter2.FilterList.Add(filter1);
+
+
+             var data = _BrandService.GetList(parameter2);
            //var brand =_BrandService.Update(new Brand {ID=2, BrandName = " cache" });
             return View();
         }
