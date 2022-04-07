@@ -13,26 +13,9 @@ namespace Core.DataAccess.Dapper
     public class GenericQueries<T>
     {
         private readonly string _tableName;
-        private readonly string _tableNameShort;
-
-        public GenericQueries()
+        public GenericQueries(string tableName)
         {
-            _tableName = GetTableName<T>();
-        }
-        protected string GetTableName<T>()
-        {
-            // Check if we've already set our custom table mapper to TableNameMapper.
-            if (SqlMapperExtensions.TableNameMapper != null)
-                return SqlMapperExtensions.TableNameMapper(typeof(T));
-
-            // If not, we can use Dapper default method "SqlMapperExtensions.GetTableName(Type type)" which is unfortunately private, that's why we have to call it via reflection.
-            string getTableName = "GetTableName";
-            MethodInfo getTableNameMethod = typeof(SqlMapperExtensions).GetMethod(getTableName, BindingFlags.NonPublic | BindingFlags.Static);
-
-            if (getTableNameMethod == null)
-                throw new ArgumentOutOfRangeException($"Method '{getTableName}' is not found in '{nameof(SqlMapperExtensions)}' class.");
-
-            return getTableNameMethod.Invoke(null, new object[] { typeof(T) }) as string;
+            _tableName= tableName;
         }
         private IEnumerable<PropertyInfo> GetProperties => typeof(T).GetProperties();
         private static List<string> GenerateListOfProperties(IEnumerable<PropertyInfo> listOfProperties)
@@ -42,13 +25,23 @@ namespace Core.DataAccess.Dapper
                     where attributes.Length <= 0 || (attributes[0] as DescriptionAttribute)?.Description != "ignore"
                     select prop.Name).ToList();
         }
-        public virtual string GetAll( object filter, object join, bool orderbyID =true)
+        public virtual string GetAll(QueryParameter queryParameter)
         {
 
-            var Query = new StringBuilder("Select");
+            var Query = new StringBuilder("Select ");
 
-            var properties = GenerateListOfProperties(GetProperties);
+            if (queryParameter.TopRow>0)            {
+
+                Query.Append($" TOP ({queryParameter.TopRow}) ");
+            }
+            
+            var properties = GenerateListOfProperties(typeof(T).GetProperties());
             properties.ForEach(prop => { Query.Append($"[{prop}],"); });
+
+            // sondaki virgülü silsin.
+            Query.Remove(Query.Length - 1, 1);
+
+            Query.Append($" from {_tableName}");
 
 
 
@@ -60,7 +53,7 @@ namespace Core.DataAccess.Dapper
         }
         private string GenerateInsertQuery()
         {
-            var insertQuery = new StringBuilder($"INSERT INTO {_tableName} ");
+            var insertQuery = new StringBuilder($"INSERT INTO   ");
 
             insertQuery.Append("(");
 
