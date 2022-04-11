@@ -1,4 +1,5 @@
 ﻿using Business.Abstract;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
@@ -29,6 +30,7 @@ namespace WebAPI.Controllers
 
 
         [HttpGet("getbyid")]
+
         public IActionResult GetByID(int id)
         {
             var result = _brandService.GetByID(id);

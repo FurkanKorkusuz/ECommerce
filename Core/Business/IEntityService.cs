@@ -13,9 +13,10 @@ namespace Core.Utilities.Business
     {
         IDataResult<List<T>> GetList(int rowNumber, Dictionary<string, string> filter, int rowPerPage = 30);
 
+
         IDataResult<T> GetByID(int id);
 
-        IDataResult<T> Insert(T entity);
+        IDataResult<T> Add(T entity);
 
         IDataResult<T> Update(T entity);
         IResult Delete(int id);

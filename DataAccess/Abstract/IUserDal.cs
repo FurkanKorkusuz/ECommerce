@@ -10,6 +10,6 @@ namespace DataAccess.Abstract
 {
     public interface IUserDal :IDapperGenericRepository<User>
     {
-        List<OperationClaim> GetOperationClaims(int userid);
+        List<OperationClaim> GetClaimsByUserID(int userID);
     }
 }

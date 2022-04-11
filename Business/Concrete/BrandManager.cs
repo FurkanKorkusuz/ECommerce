@@ -33,9 +33,9 @@ namespace Business.Concrete
 
         [ValidationAspect(typeof(BrandValidator), Priority = 1)]
         [CacheRemoveAspect("BrandManager.Get")]
-        public override IDataResult<Brand> Insert(Brand entity)
+        public override IDataResult<Brand> Add(Brand entity)
         {
-            return base.Insert(entity);
+            return base.Add(entity);
         }
 
 

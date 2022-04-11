@@ -13,6 +13,6 @@ namespace Core.DataAccess.Abstract
         void Delete(int id);
         T GetByID(int id);
         void Update(T entity);
-        int Insert(T entity);
+        int Add(T entity);
     }
 }

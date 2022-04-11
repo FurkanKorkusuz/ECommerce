@@ -1,3 +1,6 @@
+using Core.Utilities.Security.Authentication.Utils;
+using Core.Utilities.Security.Encryption;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -6,6 +9,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System;
 using System.Collections.Generic;
@@ -28,6 +32,38 @@ namespace WebAPI
         {
 
             services.AddControllers();
+
+            // Cors webApý ye eriþimlerin vc kontrol edildði bir yer.
+            // Örneðin bu site alkapida.com domaini ile yayýnlanacaksa bu web apý nin orjinal kullanýcýsý (ya da admin gibi birþey) bu domain olacaktýr. O zaman builder.WithOrigins("https://alkapida.com")  yazýlmalýdýr.
+            services.AddCors(options =>
+            {
+                options.AddPolicy("AllowOrigin",
+                                builder => builder.WithOrigins("http://localhost:3000"));
+            });
+
+            // appsettings deki tokenOptions u oku
+            var tokenOptions = Configuration.GetSection("TokenOptions").Get<TokenOptions>();
+            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options =>
+            {
+                options.TokenValidationParameters = new TokenValidationParameters
+                {
+                    // Issuer bilgisi token dan alýnsýn mý
+                    ValidateIssuer = true,
+
+                    // Audience  bilgisi token dan alýnsýn mý
+                    ValidateAudience = true,
+
+                    // token ýn yaþam ömrünü kontrol etsin mi (yoksa token hep gecerli olur.)
+                    ValidateLifetime = true,
+
+                    ValidIssuer= tokenOptions.Issuer,
+                    ValidAudience= tokenOptions.Audience,
+                    ValidateIssuerSigningKey = true,
+                    IssuerSigningKey=SecurityKeyHelper.CreateSecurityKey(tokenOptions.SecurityKey),
+                };
+            });
+
+            // Swagger çalýþtýrmak için.
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "WebAPI", Version = "v1" });
@@ -44,11 +80,18 @@ namespace WebAPI
                 app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "WebAPI v1"));
             }
 
+            // Yukarýda Cors ekledik burada çaðýrmamýz lazým (burada sýra önemli.)
+            // Buradaki builder http://localhost:3000 sitesinden gelen her türlü (get,post,put,delete) istege cevap ver demektir. 
+            app.UseCors(builder => builder.WithOrigins("http://localhost:3000").AllowAnyHeader());
+
             app.UseHttpsRedirection();
 
             app.UseRouting();
 
-            app.UseAuthorization();
+            app.UseAuthorization(); // Apý deki hangi mmetodlara kimler  eriþebilir
+
+            // Sonradan eklendi. 
+            app.UseAuthentication(); // API ye kimler eriþebilir.
 
             app.UseEndpoints(endpoints =>
             {

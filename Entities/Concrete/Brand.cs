@@ -1,4 +1,5 @@
 ﻿using Core.Entities.Abstract;
+using Core.Entities.Concrete;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -12,7 +13,7 @@ namespace Entities.Concrete
     /// Generic Repository de tablo adı dinamik olsun diye buradaki  [Table("Brands")] Attribute ünden okuyorum.
     /// </summary>
     [Table("Brands")]
-    public  class Brand:IEntity
+    public  class Brand:  IEntity
     {
         public int ID { get; set; }
         public string BrandName { get; set; }

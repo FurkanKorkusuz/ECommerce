@@ -35,11 +35,11 @@ namespace Core.Utilities.Business
                 return new ErrorDataResult<List<TEntity>>(ex.Message); 
             }
         }
-        public virtual IDataResult<TEntity> Insert(TEntity entity)
+        public virtual IDataResult<TEntity> Add(TEntity entity)
         {
             try
             {
-                entity.ID= _dal.Insert(entity);
+                entity.ID= _dal.Add(entity);
                 return new SuccessDataResult<TEntity>(entity);
             }
             catch (Exception ex)

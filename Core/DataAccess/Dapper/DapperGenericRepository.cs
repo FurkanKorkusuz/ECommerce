@@ -207,10 +207,10 @@ namespace Core.DataAccess.Dapper
                     select prop.Name).ToList();
         }
 
-        public virtual int Insert(T entity)
+        public virtual int Add(T entity)
         {
             int id = 0;
-            var insertQuery = GenerateInsertQuery();
+            var insertQuery = GenerateAddQuery();
 
             try
             {
@@ -227,7 +227,7 @@ namespace Core.DataAccess.Dapper
             
         }
 
-        private string GenerateInsertQuery()
+        private string GenerateAddQuery()
         {
             var insertQuery = new StringBuilder($"INSERT INTO {_tableName} ");
 
