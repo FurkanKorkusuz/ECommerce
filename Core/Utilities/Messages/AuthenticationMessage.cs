@@ -16,5 +16,7 @@ namespace Core.Utilities.Messages
         public static string UserAlreadyExists = "Email zaten sistemde kayıtlı.";
 
         public static string UserRegistired = "Kullanıcı kayıt edildi.";
+
+        public static string UnAuthorize = "Yetkisiz Erişim.";
     }
 }

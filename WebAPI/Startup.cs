@@ -1,3 +1,6 @@
+using Core.DependencyResolvers;
+using Core.Extensions;
+using Core.Utilities.IoC;
 using Core.Utilities.Security.Authentication.Utils;
 using Core.Utilities.Security.Encryption;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -32,6 +35,17 @@ namespace WebAPI
         {
 
             services.AddControllers();
+
+            // Eklemem gereken servisleri bu þekilde ekleyebilirim ancak kendi servis Tool umu yazarak burayý deðiþtirmeden Core katmanýnda müdahele edebilirim. Ýleride yani proje oluþturursam servislerim core dan ekli gelir.
+            // services.AddMemoryCache();
+
+            // Yukarýdaki eklemeyi yapmak yerine Core dan eklediðim servisleri burada çalýþtýrmak için
+            services.AddDependencyResolvers(new ICoreModule[]
+            {
+                new CoreModule(),
+            });
+
+
 
             // Cors webApý ye eriþimlerin vc kontrol edildði bir yer.
             // Örneðin bu site alkapida.com domaini ile yayýnlanacaksa bu web apý nin orjinal kullanýcýsý (ya da admin gibi birþey) bu domain olacaktýr. O zaman builder.WithOrigins("https://alkapida.com")  yazýlmalýdýr.
@@ -88,10 +102,12 @@ namespace WebAPI
 
             app.UseRouting();
 
-            app.UseAuthorization(); // Apý deki hangi mmetodlara kimler  eriþebilir
-
             // Sonradan eklendi. 
             app.UseAuthentication(); // API ye kimler eriþebilir.
+
+            app.UseAuthorization(); // Apý deki hangi mmetodlara kimler  eriþebilir
+
+         
 
             app.UseEndpoints(endpoints =>
             {

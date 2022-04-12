@@ -1,4 +1,5 @@
 ﻿using Business.Abstract;
+using Business.BusinessAspects.Autofac;
 using Business.ValidationRules.FluentValidation;
 using Core.Aspects.Autofac.Caching;
 using Core.Aspects.Autofac.Transaction;
@@ -8,8 +9,10 @@ using Core.DataAccess.Dapper;
 using Core.Utilities.Business;
 using Core.Utilities.Results;
 using DataAccess.Abstract;
+using DataAccess.Concrete.Dapper;
 using Entities.Concrete;
 using FluentValidation;
+using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -20,7 +23,7 @@ namespace Business.Concrete
 {
     public class BrandManager : BaseEntityManager<Brand>, IBrandService
     {
-        IBrandDal _BrandDal;
+        private IBrandDal _BrandDal;
         public BrandManager(IBrandDal dal) : base(dal)
         {
             _BrandDal = dal;
@@ -56,6 +59,12 @@ namespace Business.Concrete
         public List<Brand> GetList(QueryParameter parameter)
         {
             return _BrandDal.GetList(parameter);
+        }
+
+        [SecuredOperation("Product.List")]
+        public override IDataResult<Brand> GetByID(int id)
+        {
+            return base.GetByID(id);
         }
     }
 }

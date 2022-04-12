@@ -1,4 +1,5 @@
 ﻿using Business.Abstract;
+using Core.Extensions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -30,9 +31,11 @@ namespace WebAPI.Controllers
 
 
         [HttpGet("getbyid")]
-
+       // [Authorize(Roles ="Brand.Get")]
         public IActionResult GetByID(int id)
         {
+           
+
             var result = _brandService.GetByID(id);
             if (result.Success)
             {
