@@ -25,9 +25,8 @@ namespace Core.DependencyResolvers
             //  User.ClaimRoles() ClaimRoles u extent etmiştik. User nesnesi Claimsten gelir ancak sadece MVC de geliyordu.
             // Core ve Business projelerine Aspnetcore.Http paketini yükledik ve HttpContextAccessor ü çözümledik.
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
-            // Udemy deki bir yorumdan görüp bu şekilde değiştirdim.
-            //services.AddHttpContextAccessor();
 
+            // Stopwatch ekledim
             services.AddSingleton<Stopwatch>();
         }
     }

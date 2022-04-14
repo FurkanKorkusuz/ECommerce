@@ -1,5 +1,6 @@
 ﻿using Business.Abstract;
 using Core.Aspects.Autofac.Performance;
+using Core.DataAccess.Dapper;
 using Core.Extensions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -28,6 +29,25 @@ namespace WebAPI.Controllers
             }
 
             return BadRequest(result.InfoMessage);
+        }
+
+        [HttpGet("getlist2")]
+        public IActionResult GetList()
+        {
+
+            QueryParameter parameter2 = new QueryParameter();
+            QueryFilter filter1 = new QueryFilter();
+            filter1.FilterKey = "ID";
+            filter1.FilterValue = 1;
+            parameter2.FilterList.Add(filter1);
+
+            var result = _brandService.GetList(parameter2);
+            if (true)
+            {
+                return Ok(result);
+            }
+
+            return BadRequest();
         }
 
 

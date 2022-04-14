@@ -57,6 +57,7 @@ namespace Business.Concrete
             return new SuccessResult();
         }
         [PerformanceAspect(1)]
+        [CacheAspect(10)]
         public List<Brand> GetList(QueryParameter parameter)
         {
             System.Threading.Thread.Sleep(1300);
