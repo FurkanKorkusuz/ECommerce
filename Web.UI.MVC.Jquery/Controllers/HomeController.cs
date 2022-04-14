@@ -1,5 +1,6 @@
 ﻿using Business.Abstract;
 using Core.DataAccess.Dapper;
+using Core.Extensions;
 using Entities.Concrete;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -26,14 +27,23 @@ namespace Web.UI.MVC.Jquery.Controllers
         public IActionResult Index()
         {
             Dictionary<string, string> filter = new Dictionary<string, string>();
-            QueryParameter parameter2 = new QueryParameter();
-            QueryFilter filter1 = new QueryFilter();
-            filter1.FilterKey = "ID";
-            filter1.FilterValue = 1;
-            parameter2.FilterList.Add(filter1);
+
+            QueryParameter parameter3 = new QueryParameter();
+
+            //QueryFilter filter2 = new QueryFilter();
+            //filter2.FilterKey = "ID";
+            //filter2.FilterValue = 1;
+
+            //parameter3.FilterList.Add(filter2);
 
 
-             var data = _BrandService.GetList(parameter2);
+            parameter3.Select<Brand>();
+            parameter3.Table("Brands");
+            parameter3.FilterList.Filter("ID", 1).Filter("rrr", 1);
+            parameter3.SortBy("ID").SortBy("BrandName");
+
+                //.WhereEqual("ID", 1);
+            var data = _BrandService.GetList(parameter3);
            //var brand =_BrandService.Update(new Brand {ID=2, BrandName = " cache" });
             return View();
         }
