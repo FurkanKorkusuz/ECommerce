@@ -11,12 +11,12 @@ using System.Threading.Tasks;
 
 namespace Core.Aspects.Autofac.Performance
 {
-    public class PerformanceAspects : MethodInterception
+    public class PerformanceAspect : MethodInterception
     {
         private readonly int _interval; //Geçen süre
         private readonly Stopwatch _stopwatch; //Kronometre görevinde
 
-        public PerformanceAspects(int interval)
+        public PerformanceAspect(int interval)
         {
             _interval = interval;
             _stopwatch = ServiceTool.ServiceProvider.GetService<Stopwatch>();

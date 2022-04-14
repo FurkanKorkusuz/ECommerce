@@ -2,6 +2,7 @@
 using Business.BusinessAspects.Autofac;
 using Business.ValidationRules.FluentValidation;
 using Core.Aspects.Autofac.Caching;
+using Core.Aspects.Autofac.Performance;
 using Core.Aspects.Autofac.Transaction;
 using Core.Aspects.Autofac.Validation;
 using Core.CrossCuttingConcerns.Validation.FluentValidation;
@@ -55,9 +56,10 @@ namespace Business.Concrete
             _BrandDal.Update(brand);
             return new SuccessResult();
         }
-
+        [PerformanceAspect(1)]
         public List<Brand> GetList(QueryParameter parameter)
         {
+            System.Threading.Thread.Sleep(1300);
             return _BrandDal.GetList(parameter);
         }
 

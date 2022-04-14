@@ -33,7 +33,7 @@ namespace WebAPI.Controllers
 
         [HttpGet("getbyid")]
        // [Authorize(Roles ="Brand.Get")]
-       //[PerformanceAspects(5)] --Metod 5 saniye üzerinde çalışırsa consolda uyarı verir 
+       //[s(5)] --Metod 5 saniye üzerinde çalışırsa consolda uyarı verir 
         public IActionResult GetByID(int id)
         {
            
