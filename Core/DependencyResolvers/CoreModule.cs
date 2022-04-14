@@ -3,6 +3,7 @@ using Core.CrossCuttingConcerns.Caching.MemoryChache;
 using Core.Utilities.IoC;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
+using System.Diagnostics;
 
 namespace Core.DependencyResolvers
 {
@@ -26,6 +27,8 @@ namespace Core.DependencyResolvers
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
             // Udemy deki bir yorumdan görüp bu şekilde değiştirdim.
             //services.AddHttpContextAccessor();
+
+            services.AddSingleton<Stopwatch>();
         }
     }
 }

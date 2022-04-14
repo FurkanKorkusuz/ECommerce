@@ -1,4 +1,5 @@
 ﻿using Business.Abstract;
+using Core.Aspects.Autofac.Performance;
 using Core.Extensions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -32,6 +33,7 @@ namespace WebAPI.Controllers
 
         [HttpGet("getbyid")]
        // [Authorize(Roles ="Brand.Get")]
+       //[PerformanceAspects(5)] --Metod 5 saniye üzerinde çalışırsa consolda uyarı verir 
         public IActionResult GetByID(int id)
         {
            
