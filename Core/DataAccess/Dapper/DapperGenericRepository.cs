@@ -62,24 +62,7 @@ namespace Core.DataAccess.Dapper
 
         private IEnumerable<PropertyInfo> GetProperties => typeof(T).GetProperties();
 
-        public List<T> GetAll()
-        {
-            List<T> list = null;
-            string sqlQuery = @"select *
-                            from " + _tableName;
-            try
-            {
-                using (var connection = CreateConnection())
-                {
-                    list = connection.Query<T>(sqlQuery).ToList();
-                }
-            }
-            catch (Exception ex)
-            {
-                string msg = ex.Message;
-            }
-            return list;
-        }
+     
         public virtual List<T> GetList(int rowNumber, Dictionary<string, string> flt, int rowPerPage = 30)
         {
             List<T> list = null;
@@ -138,13 +121,13 @@ namespace Core.DataAccess.Dapper
             var getQuery = new StringBuilder($"SELECT ");
             if (qp.Select == null)
             {
-                getQuery.Append("*");
+                getQuery.AppendLine("*");
             }
             else
             {
-                qp.Select.ForEach(s => getQuery.Append($"[{s}],"));
+                qp.Select.ForEach(s => getQuery.AppendLine($"[{s}],"));
+                getQuery.Remove(getQuery.Length - 1, 1); //remove last ,
             }
-            getQuery.Remove(getQuery.Length - 1, 1); //remove last ,
 
             // FROM
             getQuery.AppendLine($"FROM {qp.TableName}");
@@ -157,20 +140,20 @@ namespace Core.DataAccess.Dapper
                     switch (join.joinType)
                     {
                         case JoinType.InnerJoin:
-                            getQuery.AppendLine($"JOIN");
+                            getQuery.Append($"JOIN");
                             break;
                         case JoinType.LeftJoin:
-                            getQuery.AppendLine($"LEFT JOIN");
+                            getQuery.Append($"LEFT JOIN");
                             break;
                         case JoinType.RightJoin:
-                            getQuery.AppendLine($"RIGHT JOIN");
+                            getQuery.Append($"RIGHT JOIN");
                             break;
                         case JoinType.OuterJoin:
-                            getQuery.AppendLine($"OUTER JOIN");
+                            getQuery.Append($"OUTER JOIN");
                             break;
                     }
 
-                    getQuery.Append($"{join.RightTableName} on {join.RightTableName}.{join.RightTableColumns[0]} = {join.LeftTableName}.{join.LeftTableColumns[0]}");
+                    getQuery.AppendLine($"{join.RightTableName} on {join.RightTableName}.{join.RightTableColumns[0]} = {join.LeftTableName}.{join.LeftTableColumns[0]}");
                     break;
                 }
             }
@@ -181,8 +164,8 @@ namespace Core.DataAccess.Dapper
             // GROUP BY
             if (qp.GroupBy!=null)
             {
-                getQuery.AppendLine("GROUP BY ");
-                qp.GroupBy.ForEach(g => getQuery.Append(g + ","));
+                getQuery.Append("GROUP BY ");
+                qp.GroupBy.ForEach(g => getQuery.AppendLine(g + ","));
                 getQuery.Remove(getQuery.Length - 1, 1); //remove last ,
             }
 
@@ -190,10 +173,10 @@ namespace Core.DataAccess.Dapper
 
 
             // ORDER BY
-            if (qp.OrderBy != null)
+            if (qp.OrderBy.Count>0)
             {
-                getQuery.AppendLine("ORDER BY ");
-                qp.OrderBy.ForEach(o => getQuery.Append($"{o.OrderBy} {(o.IsAcending ? "" : "DESC")},"));
+                getQuery.Append("ORDER BY ");
+                qp.OrderBy.ForEach(o => getQuery.AppendLine($"{o.OrderBy} {(o.IsAcending ? "" : "DESC")},"));
                 getQuery.Remove(getQuery.Length - 1, 1); //remove last ,
 
                 // OFFSET kullanılması için ORDER BY olması gerekir.
@@ -448,7 +431,6 @@ namespace Core.DataAccess.Dapper
 
             return updateQuery.ToString();
         }
-
 
     }
 }

@@ -29,7 +29,8 @@ namespace Business.Concrete
         {
             _BrandDal = dal;
         }
-        [CacheAspect(10)]
+        //[CacheAspect(10)]
+        [PerformanceAspect(1)]
         public override IDataResult<List<Brand>> GetList(int rowNumber, Dictionary<string, string> filter, int rowPerPage = 20)
         {
             return base.GetList(rowNumber, filter, rowPerPage);
@@ -57,11 +58,11 @@ namespace Business.Concrete
             return new SuccessResult();
         }
         [PerformanceAspect(1)]
-        //[CacheAspect(10)]
-        public IDataResult<List<Brand>> GetList(QueryParameter parameter)
+        [CacheAspect(10)]
+        public override IDataResult<List<Brand>> GetList(QueryParameter parameter)
         {
             System.Threading.Thread.Sleep(1300);
-            return new SuccessDataResult<List<Brand>>( _BrandDal.GetList(parameter));
+            return base.GetList(parameter);
         }
 
         [PerformanceAspect(1)]

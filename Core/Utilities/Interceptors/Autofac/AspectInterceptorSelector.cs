@@ -19,11 +19,34 @@ namespace Core.Utilities.Interceptors.Autofac
             try
             {
 
+                var parameterTypes = method.GetParameters().Select(x => x.ParameterType);
+                // Metodu override ettiğim zaman aynı isimdeki metodlarda AmbiguousMatchException hatası alıyordum.
+                // bunun Yerine tüm metodları GetMethods() ile alıp metot ismi ve aynı isimle override ettiğim için metod parametreleriyle aynı parametrelere sahip olan metodu çağırdım. Burada aynı isimle birden fazla metodum olsa bile aynı parametre tipleri olamayacağından benim istediğim metodu yakalamış olurum.
+                var myMethod = type.GetMethods()
+                    .Where(x => x.Name == method.Name
+                    && Enumerable.SequenceEqual(
+                        method.GetParameters().Select(x => x.ParameterType),
+                        x.GetParameters().Select(x => x.ParameterType)))
+                    .SingleOrDefault<MethodInfo>();
+
+                classAttributes.AddRange(myMethod.GetCustomAttributes<MethodInterceptionBaseAttribute>(true));
+                //foreach (var mthd in methods)
+                //{
+                //    var prts=  mthd.GetParameters().Select(x => x.ParameterType);
+                //    if (Enumerable.SequenceEqual(parameterTypes, prts))
+                //    {
+                //        classAttributes.AddRange(mthd.GetCustomAttributes<MethodInterceptionBaseAttribute>(true));
+                //    }
+                //}
+
                 // metot attribute ile aspect olayı gerçekleşecek olan attributler
-                var methodAttributes = type.GetMethod(method.Name).GetCustomAttributes<MethodInterceptionBaseAttribute>(true);                     
-                // metod olanları da classdakilere ekleyelim (beraber çalıştırmak için )
+                /* ***********************
+                var methodAttributes = type.GetMethod(method.Name).GetCustomAttributes<MethodInterceptionBaseAttribute>(true);     
+       
+                                // metod olanları da classdakilere ekleyelim (beraber çalıştırmak için )
                                                                                                                                                    // örneğin securty class ile verilmiştir ve o classdaki tüm metodlarda doğrulama vardır ama validate ise tek add metoduna metot Attribute ile eklenmişse ikisini de çalıştırmam gerekli.
                 classAttributes.AddRange(methodAttributes);
+                         ************************************** */
 
             }
             catch (AmbiguousMatchException)

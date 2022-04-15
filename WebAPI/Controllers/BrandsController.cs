@@ -32,28 +32,25 @@ namespace WebAPI.Controllers
         }
 
         [HttpGet("getlist2")]
-        public IActionResult GetList()
+        public IActionResult GetList(int id)
         {
 
             QueryParameter parameter2 = new QueryParameter();
-            QueryFilter filter1 = new QueryFilter();
-            filter1.FilterKey = "ID";
-            filter1.FilterValue = 1;
-            parameter2.FilterList.Add(filter1);
+            parameter2.FilterList.Filter("ID", id);
+            parameter2.TableName = "Brands";
 
             var result = _brandService.GetList(parameter2);
-            if (true)
+            if (result.Success)
             {
                 return Ok(result);
             }
 
-            return BadRequest();
+            return BadRequest(result.InfoMessage);
         }
 
 
         [HttpGet("getbyid")]
        // [Authorize(Roles ="Brand.Get")]
-       //[s(5)] --Metod 5 saniye üzerinde çalışırsa consolda uyarı verir 
         public IActionResult GetByID(int id)
         {
            

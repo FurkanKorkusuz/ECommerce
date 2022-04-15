@@ -36,6 +36,18 @@ namespace Core.Utilities.Business
                 return new ErrorDataResult<List<TEntity>>(ex.Message);
             }
         }
+
+        public virtual IDataResult<List<TEntity>> GetList(QueryParameter queryParameter)
+        {
+            try
+            {
+                return new SuccessDataResult<List<TEntity>>(_dal.GetList(queryParameter));
+            }
+            catch (Exception ex)
+            {
+                return new ErrorDataResult<List<TEntity>>(ex.Message);
+            }
+        }
         public virtual IDataResult<TEntity> Add(TEntity entity)
         {
             try
@@ -87,22 +99,7 @@ namespace Core.Utilities.Business
             }
         }
 
-        public virtual IDataResult<List<TEntity>> GetList(QueryParameter queryParameter)
-        {
-            return new SuccessDataResult<List<TEntity>>(_dal.GetList(queryParameter));
-        }
 
-        public IDataResult<List<TEntity>> GetList(QueryParameter queryParameter)
-        {
-            try
-            {
-                _dal.GetList(entity);
-                return new SuccessDataResult<TEntity>(entity);
-            }
-            catch (Exception ex)
-            {
-                return new ErrorDataResult<TEntity>(ex.Message);
-            }
-        }
+    
     }
 }
