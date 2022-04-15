@@ -352,7 +352,6 @@ namespace Core.DataAccess.Dapper
         {
             int id = 0;
             var insertQuery = GenerateAddQuery();
-
             try
             {
                 using (var cn = CreateConnection())

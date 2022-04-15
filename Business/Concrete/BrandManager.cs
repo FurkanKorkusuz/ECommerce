@@ -2,6 +2,7 @@
 using Business.BusinessAspects.Autofac;
 using Business.ValidationRules.FluentValidation;
 using Core.Aspects.Autofac.Caching;
+using Core.Aspects.Autofac.Logging;
 using Core.Aspects.Autofac.Performance;
 using Core.Aspects.Autofac.Transaction;
 using Core.Aspects.Autofac.Validation;
@@ -66,9 +67,10 @@ namespace Business.Concrete
         }
 
         [PerformanceAspect(1)]
+        [DataBaseExceptionLogger]
         public override IDataResult<Brand> GetByID(int id)
         {
-            System.Threading.Thread.Sleep(1300);
+            throw new Exception();
             return base.GetByID(id);
         }
     }

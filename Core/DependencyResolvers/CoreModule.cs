@@ -1,5 +1,7 @@
 ﻿using Core.CrossCuttingConcerns.Caching;
 using Core.CrossCuttingConcerns.Caching.MemoryChache;
+using Core.DataAccess.Abstract;
+using Core.DataAccess.Dapper;
 using Core.Utilities.IoC;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
@@ -28,6 +30,8 @@ namespace Core.DependencyResolvers
 
             // Stopwatch ekledim
             services.AddSingleton<Stopwatch>();
+
+            services.AddSingleton<ILogDal, DpLogDal>();
         }
     }
 }

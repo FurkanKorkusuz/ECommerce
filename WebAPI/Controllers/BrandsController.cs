@@ -53,14 +53,11 @@ namespace WebAPI.Controllers
        // [Authorize(Roles ="Brand.Get")]
         public IActionResult GetByID(int id)
         {
-           
-
             var result = _brandService.GetByID(id);
             if (result.Success)
             {
                 return Ok(result);
             }
-
             return BadRequest(result.InfoMessage);
         }
     }
