@@ -66,7 +66,7 @@ namespace Core.DataAccess.Dapper
         {
             List<T> list = null;
             string sqlQuery = @"select *
-                            from " + _tableName ;
+                            from " + _tableName;
             try
             {
                 using (var connection = CreateConnection())
@@ -86,9 +86,9 @@ namespace Core.DataAccess.Dapper
 
             Dictionary<string, object> parameters;
             string filter = Filter(flt, out parameters);
-            string sort = flt.ContainsKey("Sort") && !string.IsNullOrEmpty(flt["Sort"]) 
-                ?  flt["Sort"].Replace('&', ' ') 
-                :  "ID desc";
+            string sort = flt.ContainsKey("Sort") && !string.IsNullOrEmpty(flt["Sort"])
+                ? flt["Sort"].Replace('&', ' ')
+                : "ID desc";
             parameters.Add("@sort", sort);
             parameters.Add("@rowPerPage", rowPerPage);
             parameters.Add("@rowNumber", rowNumber);
@@ -102,8 +102,8 @@ namespace Core.DataAccess.Dapper
             try
             {
                 using (var connection = CreateConnection())
-                {                   
-                    list= connection.Query<T>(sqlQuery, parameters).ToList();
+                {
+                    list = connection.Query<T>(sqlQuery, parameters).ToList();
                 }
             }
             catch (Exception ex)
@@ -112,11 +112,99 @@ namespace Core.DataAccess.Dapper
             }
             return list;
         }
-        public List<T> GetAll(QueryParameter queryParameter)
+
+        public virtual List<T> GetList(QueryParameter queryParameter)
         {
-            throw new NotImplementedException();
+            List<T> list = null;
+            Dictionary<string, object> parameters ;
+            string sqlQuery = GenerateGetListQuery(queryParameter , out parameters);
+            try
+            {
+                using (var connection = CreateConnection())
+                {
+                    list = connection.Query<T>(sqlQuery, parameters).ToList();
+                }
+            }
+            catch (Exception ex)
+            {
+                string msg = ex.Message;
+            }
+            return list;
         }
 
+        private string GenerateGetListQuery(QueryParameter qp, out Dictionary<string, object> parameters)
+        {
+            // SELECT
+            var getQuery = new StringBuilder($"SELECT ");
+            if (qp.Select == null)
+            {
+                getQuery.Append("*");
+            }
+            else
+            {
+                qp.Select.ForEach(s => getQuery.Append($"[{s}],"));
+            }
+            getQuery.Remove(getQuery.Length - 1, 1); //remove last ,
+
+            // FROM
+            getQuery.AppendLine($"FROM {qp.TableName}");
+
+            // JOIN
+            if (qp.Joins.Count > 0)
+            {
+                foreach (var join in qp.Joins)
+                {
+                    switch (join.joinType)
+                    {
+                        case JoinType.InnerJoin:
+                            getQuery.AppendLine($"JOIN");
+                            break;
+                        case JoinType.LeftJoin:
+                            getQuery.AppendLine($"LEFT JOIN");
+                            break;
+                        case JoinType.RightJoin:
+                            getQuery.AppendLine($"RIGHT JOIN");
+                            break;
+                        case JoinType.OuterJoin:
+                            getQuery.AppendLine($"OUTER JOIN");
+                            break;
+                    }
+
+                    getQuery.Append($"{join.RightTableName} on {join.RightTableName}.{join.RightTableColumns[0]} = {join.LeftTableName}.{join.LeftTableColumns[0]}");
+                    break;
+                }
+            }
+
+            // WHERE
+            getQuery.AppendLine(Filter(qp.FilterList, out  parameters));
+
+            // GROUP BY
+            if (qp.GroupBy!=null)
+            {
+                getQuery.AppendLine("GROUP BY ");
+                qp.GroupBy.ForEach(g => getQuery.Append(g + ","));
+                getQuery.Remove(getQuery.Length - 1, 1); //remove last ,
+            }
+
+            // HAVING
+
+
+            // ORDER BY
+            if (qp.OrderBy != null)
+            {
+                getQuery.AppendLine("ORDER BY ");
+                qp.OrderBy.ForEach(o => getQuery.Append($"{o.OrderBy} {(o.IsAcending ? "" : "DESC")},"));
+                getQuery.Remove(getQuery.Length - 1, 1); //remove last ,
+
+                // OFFSET kullanılması için ORDER BY olması gerekir.
+                //OFFSET @rowNumber rows fetch next @rowPerPage rows only
+                getQuery.AppendLine($"OFFSET {qp.RowNumber} rows fetch next {qp.RowPerPage} rows only");
+
+
+            }
+
+            return getQuery.ToString();
+        }
         private string Filter(Dictionary<string, string> filter, out Dictionary<string, object> prt)
         {
             prt = new Dictionary<string, object>();
@@ -148,7 +236,7 @@ namespace Core.DataAccess.Dapper
                         break;
                     case "BrandName":
                         {
-                            rtn += " and BrandName = @BrandName" ;
+                            rtn += " and BrandName = @BrandName";
                             prt.Add("@BrandName", item.Value);
                         }
                         break;
@@ -159,6 +247,73 @@ namespace Core.DataAccess.Dapper
 
 
             return rtn;
+        }
+
+
+        private string Filter(List<QueryFilter> filters,out Dictionary<string, object> parameters)
+        {
+            var qf = new StringBuilder("Where 1=1");
+            parameters = new Dictionary<string, object>();
+            foreach (QueryFilter filter in filters)
+            {
+                switch (filter.conditionOperator)
+                {
+                    case QueryFilter.ConditionOperator.Equals:
+                        qf.Append($" and {filter.FilterKey} = @{filter.FilterKey},");
+                        parameters.Add(filter.FilterKey, filter.FilterValue);
+                        break;
+                    case QueryFilter.ConditionOperator.EqualsNot:
+                        qf.Append($" and {filter.FilterKey} != {filter.FilterKey},");
+                        parameters.Add(filter.FilterKey, filter.FilterValue);
+                        break;
+                    case QueryFilter.ConditionOperator.Bigger:
+                        qf.Append($" and {filter.FilterKey} > {filter.FilterKey},");
+                        parameters.Add(filter.FilterKey, filter.FilterValue);
+                        break;
+                    case QueryFilter.ConditionOperator.Smaller:
+                        qf.Append($" and {filter.FilterKey} < {filter.FilterKey},");
+                        parameters.Add(filter.FilterKey, filter.FilterValue);
+                        break;
+                    case QueryFilter.ConditionOperator.EqBigger:
+                        qf.Append($" and {filter.FilterKey} >= {filter.FilterKey},");
+                        parameters.Add(filter.FilterKey, filter.FilterValue);
+                        break;
+                    case QueryFilter.ConditionOperator.EqSmaller:
+                        qf.Append($" and {filter.FilterKey} <= {filter.FilterKey},");
+                        parameters.Add(filter.FilterKey, filter.FilterValue);
+                        break;
+                    case QueryFilter.ConditionOperator.In:
+                        qf.Append($" and {filter.FilterKey} in({filter.FilterKey}),");
+                        parameters.Add(filter.FilterKey, filter.FilterValue);
+                        break;
+                    case QueryFilter.ConditionOperator.NotIn:
+                        qf.Append($" and {filter.FilterKey} not in ({filter.FilterKey}),");
+                        parameters.Add(filter.FilterKey, filter.FilterValue);
+                        break;
+                    case QueryFilter.ConditionOperator.Like:
+                        qf.Append($" and {filter.FilterKey} like%{filter.FilterKey}%,");
+                        parameters.Add(filter.FilterKey, filter.FilterValue);
+                        break;
+                    case QueryFilter.ConditionOperator.NotLike:
+                        qf.Append($" and {filter.FilterKey} not like%{filter.FilterKey}%,");
+                        parameters.Add(filter.FilterKey, filter.FilterValue);
+                        break;
+                    default:
+                        qf.Append($" and {filter.FilterKey} = {filter.FilterKey},");
+                        parameters.Add(filter.FilterKey, filter.FilterValue);
+                        break;
+                }
+            }
+
+            qf.Remove(qf.Length - 1, 1);
+
+            if (filters.Count >0)
+            {
+                return qf.ToString();
+            }
+
+            return "";
+
         }
 
 
@@ -219,7 +374,7 @@ namespace Core.DataAccess.Dapper
             {
                 using (var cn = CreateConnection())
                 {
-                    id= cn.ExecuteScalar<int>(insertQuery, entity);
+                    id = cn.ExecuteScalar<int>(insertQuery, entity);
                 }
             }
             catch (Exception ex)
@@ -227,7 +382,7 @@ namespace Core.DataAccess.Dapper
                 throw new Exception(ex.Message);
             }
             return id;
-            
+
         }
 
         private string GenerateAddQuery()
@@ -240,7 +395,7 @@ namespace Core.DataAccess.Dapper
 
             properties.Remove("ID");
 
-           
+
             properties.ForEach(prop => { insertQuery.Append($"[{prop}],"); });
 
             insertQuery
@@ -266,7 +421,7 @@ namespace Core.DataAccess.Dapper
             {
                 using (var cn = CreateConnection())
                 {
-                  cn.Execute(updateQuery, entity);
+                    cn.Execute(updateQuery, entity);
                 }
             }
             catch (Exception ex)
@@ -294,6 +449,6 @@ namespace Core.DataAccess.Dapper
             return updateQuery.ToString();
         }
 
-      
+
     }
 }

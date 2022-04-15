@@ -11,8 +11,6 @@ namespace Core.DataAccess.Dapper
         public string FilterKey { get; set; }
         public object FilterValue { get; set; }
         public ConditionOperator conditionOperator { get; set; } = ConditionOperator.Equals;
-        public ConditionRelation conditionRelation { get; set; } = ConditionRelation.AND;
-
 
         public enum ConditionOperator
         {
@@ -32,15 +30,11 @@ namespace Core.DataAccess.Dapper
             NotLike,
 
 
-            IsNot,
-            Is
+            //IsNot,
+            //Is
         }
 
-        public enum ConditionRelation
-        {
-            OR,
-            AND,
-        }
+     
 
     }
 }

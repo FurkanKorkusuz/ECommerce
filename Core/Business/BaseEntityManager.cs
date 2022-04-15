@@ -28,19 +28,19 @@ namespace Core.Utilities.Business
         public virtual IDataResult<List<TEntity>> GetList(int rowNumber, Dictionary<string, string> filter, int rowPerPage = 20)
         {
             try
-            { 
-                return new SuccessDataResult<List<TEntity>>(_dal.GetList(rowNumber, filter, rowPerPage)); 
+            {
+                return new SuccessDataResult<List<TEntity>>(_dal.GetList(rowNumber, filter, rowPerPage));
             }
             catch (Exception ex)
             {
-                return new ErrorDataResult<List<TEntity>>(ex.Message); 
+                return new ErrorDataResult<List<TEntity>>(ex.Message);
             }
         }
         public virtual IDataResult<TEntity> Add(TEntity entity)
         {
             try
             {
-                entity.ID= _dal.Add(entity);
+                entity.ID = _dal.Add(entity);
                 return new SuccessDataResult<TEntity>(entity);
             }
             catch (Exception ex)
@@ -51,8 +51,9 @@ namespace Core.Utilities.Business
 
         public virtual IResult Delete(int id)
         {
-            try            {
-                 _dal.Delete(id);
+            try
+            {
+                _dal.Delete(id);
                 return new SuccessResult();
             }
             catch (Exception ex)
@@ -84,6 +85,11 @@ namespace Core.Utilities.Business
             {
                 return new ErrorDataResult<TEntity>(ex.Message);
             }
+        }
+
+        public virtual IDataResult<List<TEntity>> GetList(QueryParameter queryParameter)
+        {
+            return new SuccessDataResult<List<TEntity>>(_dal.GetList(queryParameter));
         }
 
         public IDataResult<List<TEntity>> GetList(QueryParameter queryParameter)

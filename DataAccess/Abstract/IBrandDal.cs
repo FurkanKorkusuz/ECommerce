@@ -11,6 +11,5 @@ namespace DataAccess.Abstract
 {
     public interface IBrandDal :  IDapperGenericRepository<Brand>
     {
-        public List<Brand> GetList(QueryParameter parameter);
     }
 }
