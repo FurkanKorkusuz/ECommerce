@@ -20,18 +20,7 @@ namespace Core.Aspects.Autofac.Logging
         {
             _logDal= ServiceTool.ServiceProvider.GetService<ILogDal>();
         }
-        protected override void OnException(IInvocation invocation)
-        {
-            try
-            {
-                _logDal.Add(CreateLog(invocation));
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex.ToString());
-            }
-           
-        }
+
 
         private Log CreateLog(IInvocation invocation)
         {

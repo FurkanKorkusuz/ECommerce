@@ -94,6 +94,9 @@ namespace WebAPI
                 app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "WebAPI v1"));
             }
 
+            //Exception için yazdýðýmýz middleware
+            app.ConfigureCustomExceptionMiddleware();
+
             // Yukarýda Cors ekledik burada çaðýrmamýz lazým (burada sýra önemli.)
             // Buradaki builder http://localhost:3000 sitesinden gelen her türlü (get,post,put,delete) istege cevap ver demektir. 
             app.UseCors(builder => builder.WithOrigins("http://localhost:3000").AllowAnyHeader());
