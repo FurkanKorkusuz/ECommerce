@@ -57,16 +57,17 @@ namespace Business.Concrete
             return new SuccessResult();
         }
         [PerformanceAspect(1)]
-        [CacheAspect(10)]
-        public List<Brand> GetList(QueryParameter parameter)
+        //[CacheAspect(10)]
+        public IDataResult<List<Brand>> GetList(QueryParameter parameter)
         {
             System.Threading.Thread.Sleep(1300);
-            return _BrandDal.GetList(parameter);
+            return new SuccessDataResult<List<Brand>>( _BrandDal.GetList(parameter));
         }
 
-        [SecuredOperation("Product.List")]
+        [PerformanceAspect(1)]
         public override IDataResult<Brand> GetByID(int id)
         {
+            System.Threading.Thread.Sleep(1300);
             return base.GetByID(id);
         }
     }

@@ -112,7 +112,10 @@ namespace Core.DataAccess.Dapper
             }
             return list;
         }
-
+        public List<T> GetAll(QueryParameter queryParameter)
+        {
+            throw new NotImplementedException();
+        }
 
         private string Filter(Dictionary<string, string> filter, out Dictionary<string, object> prt)
         {
@@ -291,6 +294,6 @@ namespace Core.DataAccess.Dapper
             return updateQuery.ToString();
         }
 
-     
+      
     }
 }

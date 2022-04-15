@@ -69,7 +69,7 @@ namespace Business.Concrete
 
         public IResult UserExist(string email)
         {
-            if (_userService.GetUserByEmail(email).Success)
+            if (!_userService.GetUserByEmail(email).Success)
             {
                 return new ErrorResult(AuthenticationMessage.UserAlreadyExists);
             }

@@ -1,4 +1,5 @@
-﻿using Core.Entities;
+﻿using Core.DataAccess.Dapper;
+using Core.Entities;
 using Core.Entities.Abstract;
 using Core.Utilities.Results;
 using System;
@@ -13,7 +14,7 @@ namespace Core.Utilities.Business
     {
         IDataResult<List<T>> GetList(int rowNumber, Dictionary<string, string> filter, int rowPerPage = 30);
 
-
+        IDataResult<List<T>> GetList(QueryParameter queryParameter);   
         IDataResult<T> GetByID(int id);
 
         IDataResult<T> Add(T entity);

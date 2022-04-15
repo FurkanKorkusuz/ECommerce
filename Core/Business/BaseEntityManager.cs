@@ -1,5 +1,6 @@
 ﻿using Core.DataAccess;
 using Core.DataAccess.Abstract;
+using Core.DataAccess.Dapper;
 using Core.Entities;
 using Core.Entities.Abstract;
 using Core.Utilities.Results;
@@ -77,6 +78,19 @@ namespace Core.Utilities.Business
             try
             {
                 _dal.Update(entity);
+                return new SuccessDataResult<TEntity>(entity);
+            }
+            catch (Exception ex)
+            {
+                return new ErrorDataResult<TEntity>(ex.Message);
+            }
+        }
+
+        public IDataResult<List<TEntity>> GetList(QueryParameter queryParameter)
+        {
+            try
+            {
+                _dal.GetList(entity);
                 return new SuccessDataResult<TEntity>(entity);
             }
             catch (Exception ex)

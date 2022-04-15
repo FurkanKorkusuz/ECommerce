@@ -13,7 +13,5 @@ namespace Business.Abstract
     public interface IBrandService : IEntityService<Brand>
     {
         public IResult TransactionTest(Brand brand);
-
-        public List<Brand> GetList(QueryParameter parameter);
     }
 }
